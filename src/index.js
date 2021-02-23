@@ -1,15 +1,43 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-
 import './styles.scss';
 
+import { createStore } from 'redux' //! ability to create a store
+import { connect, Provider } from 'react-redux'
+
+const initialState = {
+  count:0,
+}
+
+const INCREMENT = 'INCREMENT' //! common practice to avoid spelling errors with redux action types
+
+const incrementValue = () => ({
+  type: INCREMENT,
+})
+
+const reducer = ( state = initialState, action ) => {
+  if (action.type === INCREMENT) { //! Watch out for spelling errors
+    return {
+      count: state.count + 1
+    }
+  }
+
+  return state
+}
+
+const store = createStore(reducer)
+
 class Counter extends Component {
+
   render() {
+    const  { count, increment} = this.props
+    console.log({ count, increment })
+
     return (
       <main className="Counter">
-        <p className="count">0</p>
+        <p className="count">{ count }</p>
         <section className="controls">
-          <button>Increment</button>
+          <button onClick={increment}>Increment</button>
           <button>Decrement</button>
           <button>Reset</button>
         </section>
@@ -18,4 +46,29 @@ class Counter extends Component {
   }
 }
 
-render(<Counter />, document.getElementById('root'));
+const mapStateToProps = (state) => {
+  return state
+}
+
+const mapDispatchToProps = (dispatch) => {
+  //! dispatch gives you the ability to dispatch action to state and invoke 
+  return {
+    increment() { dispatch(incrementValue()) }
+  }
+}
+
+//! names ^^ don't matter - but convention helps
+
+const CounterContainer = connect(mapStateToProps, mapDispatchToProps)(Counter) //! returns function waiting for a react component
+//! has two arguments usually ^^ msp & mdp
+
+//! msp, mdp in that order in connect function
+
+render(
+  //! Provider connects redux to react - pass in prop so entire app
+  //! has access to the store (state object)
+  <Provider store={store}>
+    <CounterContainer />
+  </Provider>,
+  document.getElementById('root'),
+);
