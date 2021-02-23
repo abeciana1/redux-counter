@@ -11,6 +11,7 @@ const initialState = {
 
 const INCREMENT = 'INCREMENT' //! common practice to avoid spelling errors with redux action types
 const DECREMENT = 'DECREMENT'
+const RESET = 'RESET'
 
 const increment = () => ({ //! old name incrementValue
   type: INCREMENT,
@@ -18,6 +19,10 @@ const increment = () => ({ //! old name incrementValue
 
 const decrement = () => ({ //! old name decrementValue
   type: DECREMENT,
+})
+
+const reset = () => ({
+  type: RESET
 })
 
 const reducer = ( state = initialState, action ) => {
@@ -31,6 +36,12 @@ const reducer = ( state = initialState, action ) => {
       count: state.count - 1,
     };
   }
+
+  if (action.type === RESET) {
+    return {
+      count: 0
+    }
+  }
   return state
 }
 
@@ -39,7 +50,7 @@ const store = createStore(reducer)
 class Counter extends Component {
 
   render() {
-    const  { count, increment, decrement} = this.props
+    const  { count, increment, decrement, reset} = this.props
     // console.log({ count, increment })
 
     return (
@@ -48,7 +59,7 @@ class Counter extends Component {
         <section className="controls">
           <button onClick={increment}>Increment</button>
           <button onClick={decrement}>Decrement</button>
-          <button>Reset</button>
+          <button onClick={reset}>Reset</button>
         </section>
       </main>
     );
@@ -77,13 +88,16 @@ const mapDispatchToProps = {
   // }, dispatch)
 
   increment, //! modern redux - can just pass in object
-  decrement
+  decrement,
+  reset
 }
 
 //! names ^^ don't matter - but convention helps
 
 const CounterContainer = connect(mapStateToProps, mapDispatchToProps)(Counter) //! returns function waiting for a react component
 //! has two arguments usually ^^ msp & mdp
+
+//! msp argument can be omitted (use null) -- if there no actions that need to happen and only display things
 
 //! msp, mdp in that order in connect function
 
