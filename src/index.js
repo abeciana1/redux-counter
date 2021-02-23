@@ -10,9 +10,14 @@ const initialState = {
 }
 
 const INCREMENT = 'INCREMENT' //! common practice to avoid spelling errors with redux action types
+const DECREMENT = 'DECREMENT'
 
-const incrementValue = () => ({
+const increment = () => ({ //! old name incrementValue
   type: INCREMENT,
+})
+
+const decrement = () => ({ //! old name decrementValue
+  type: DECREMENT,
 })
 
 const reducer = ( state = initialState, action ) => {
@@ -21,7 +26,11 @@ const reducer = ( state = initialState, action ) => {
       count: state.count + 1
     }
   }
-
+  if (action.type === DECREMENT) {
+    return {
+      count: state.count - 1,
+    };
+  }
   return state
 }
 
@@ -30,15 +39,15 @@ const store = createStore(reducer)
 class Counter extends Component {
 
   render() {
-    const  { count, increment} = this.props
-    console.log({ count, increment })
+    const  { count, increment, decrement} = this.props
+    // console.log({ count, increment })
 
     return (
       <main className="Counter">
         <p className="count">{ count }</p>
         <section className="controls">
           <button onClick={increment}>Increment</button>
-          <button>Decrement</button>
+          <button onClick={decrement}>Decrement</button>
           <button>Reset</button>
         </section>
       </main>
@@ -50,11 +59,25 @@ const mapStateToProps = (state) => {
   return state
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = {
+// const mapDispatchToProps = (dispatch) => {
   //! dispatch gives you the ability to dispatch action to state and invoke 
-  return {
-    increment() { dispatch(incrementValue()) }
-  }
+  // return { //! old solution
+  //   increment() {
+  //     dispatch(incrementValue())
+  //   },
+  //   decrement() {
+  //     dispatch(decrementValue())
+  //   }
+  // };
+
+  // return bindActionCreators({ //! alternative solution
+  //   increment, 
+  //   decrement
+  // }, dispatch)
+
+  increment, //! modern redux - can just pass in object
+  decrement
 }
 
 //! names ^^ don't matter - but convention helps
